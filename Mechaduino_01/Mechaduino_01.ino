@@ -25,7 +25,7 @@
 
  x  -  position mode
  v  -  velocity mode
- x  -  torque mode
+ t  -  torque mode
 
  y  -  enable control loop
  n  -  disable control loop
@@ -50,10 +50,10 @@
 /////////////////SETUP////////////////
 //////////////////////////////////////
 
-
+  static float r_temp = 0;
 void setup()        // This code runs once at startup
 {                         
-   
+
   digitalWrite(ledPin,HIGH);        // turn LED on 
   setupPins();                      // configure pins
   setupTCInterrupts();              // configure controller interrupt
@@ -84,27 +84,20 @@ void setup()        // This code runs once at startup
 
 void loop()                 // main loop
 {
-static int t = 0;
-static int t_1 = 0;
-int dt = 5000;
-static float e_temp = 0;
+
   serialCheck();              //must have this execute in loop for serial commands to function
+  r_temp = -(analogRead(0)-512.0);
 
-  //r=0.1125*step_count;      //Don't use this anymore. Step interrupts enabled above by "configureStepDir()", adjust step size in parameters.cpp
+  if (abs(r_temp)>50){
+  r = 0;
 
-e_temp = -(analogRead(0)-512.0);
- if (abs(e_temp)>30){
-  e = 0;
-  DTerm = 0;
  }
  else{
-  e = e_temp;
+  r = 2*r_temp;
  }
-//SerialUSB.println(e,DEC);
- while(t < t_1 + dt) {           //wait calculated dt 
-    t = micros();
-    }
-  t_1 = t;  
+  
+  SerialUSB.println(r);
+  delay(10);
 
 }
 

@@ -30,11 +30,11 @@ void TC5_Handler() {                // gets called with FPID frequency
     else {
       switch (mode) {
         case 'x':         // position control                        
-            //e = (r - yw);
+            e = (r - yw);
             
             ITerm += (pKi * e);                             //Integral wind up limit
-            if (ITerm > 50.0) ITerm = 50.0;
-            else if (ITerm < -50.0) ITerm = -50.0;          
+            if (ITerm > 150.0) ITerm = 150.0;
+            else if (ITerm < -150.0) ITerm = -150.0;          
            
             DTerm = pLPFa*DTerm -  pLPFb*pKd*(yw-yw_1);
            
