@@ -86,19 +86,20 @@ void loop()                 // main loop
 {
 
   serialCheck();              //must have this execute in loop for serial commands to function
+  
   r_temp = -(analogRead(0)-512.0);
 
-  if (abs(r_temp)>50){
+  if (abs(r_temp)>5){
   r = 0;
 
  }
+ 
  else{
-  r = 2*r_temp;
+  r = 50 * r_temp;
  }
   
   SerialUSB.println(r);
-  delay(10);
-
+  delay(100);
 }
 
 

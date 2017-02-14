@@ -58,7 +58,7 @@ void TC5_Handler() {                // gets called with FPID frequency
           break;
           
         case 't':         // torque control
-          u = 1.0 * r ;
+          u = 1.0 * r;
           break;
         default:
           u = 0;
