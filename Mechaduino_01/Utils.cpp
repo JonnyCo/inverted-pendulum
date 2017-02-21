@@ -318,7 +318,9 @@ void serialCheck() {        //Monitors serial for commands.  Must be called in r
     char inChar = (char)SerialUSB.read();
 
     switch (inChar) {
-
+      case 'i':
+        mode = 'i';
+        break;
 
       case 'p':             //print
         print_angle();

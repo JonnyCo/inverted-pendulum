@@ -13,6 +13,9 @@ volatile float e = 0.0;   // e = r-y (error)
 volatile float p = 0.0;   // proportional effort
 volatile float i = 0.0;   // integral effort
 
+volatile float bv = 0.0;
+volatile float bt = 0.0;
+volatile float bt_1 = 0.0;
 
 volatile float u = 0.0;     //real control effort (not abs)
 volatile float u_1 = 0.0;   //value of u at previous time step, etc...

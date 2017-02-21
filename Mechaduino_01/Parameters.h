@@ -29,6 +29,9 @@ extern volatile float pLPFb;
 extern volatile float vLPFa;
 extern volatile float vLPFb;
 
+extern volatile float iKbt; 
+extern volatile float iKbv;
+extern volatile float iKwv;
 
 extern const int spr; //  200 steps per revolution
 extern const float aps; // angle per step
