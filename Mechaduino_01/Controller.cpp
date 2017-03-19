@@ -17,8 +17,8 @@ void TC5_Handler() {                // gets called with FPID frequency
     TEST1_HIGH();  //digitalWrite(3, HIGH);       //Fast Write to Digital 3 for debugging
 
     y = lookup[readEncoder()];                    //read encoder and lookup corrected angle in calibration lookup table
-    bt = (analogRead(0)-512.0);
-    
+   
+   
     if ((y - y_1) < -180.0) wrap_count += 1;      //Check if we've rotated more than a full revolution (have we "wrapped" around from 359 degrees to 0 or ffrom 0 to 359?)
     else if ((y - y_1) > 180.0) wrap_count -= 1;
 
@@ -63,9 +63,10 @@ void TC5_Handler() {                // gets called with FPID frequency
           break;
 
         case 'i':
-          v = vLPFa*v +  vLPFb*(yw-yw_1);
+                             
+          v = vLPFa*v +  vLPFb*(yw-yw_1);         //v is wheel velocity
           
-          bv = pLPFa*bv - pLPFb*pKd*(bt-bt_1);
+          bv = pLPFa*bv + pLPFb*pKd*(bt-bt_1);    //bv is pendulum body velocity
 
           u = (iKwv*v) + (iKbt*bt) + (iKbv*bv); 
           
@@ -111,6 +112,7 @@ void TC5_Handler() {                // gets called with FPID frequency
     u_1 = u;
     yw_1 = yw;
     //y_1 = y;
+    bt_2 = bt_1;
     bt_1 = bt;
     
     if (print_yw ==  true){       //for step resonse... still under development

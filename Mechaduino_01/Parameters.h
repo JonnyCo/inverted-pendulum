@@ -33,6 +33,12 @@ extern volatile float iKbt;
 extern volatile float iKbv;
 extern volatile float iKwv;
 
+extern volatile double ac1;
+extern volatile double ac2; 
+extern volatile double ra1;
+extern volatile double ra2;
+extern volatile double grav; 
+
 extern const int spr; //  200 steps per revolution
 extern const float aps; // angle per step
 extern int cpr; //counts per rev

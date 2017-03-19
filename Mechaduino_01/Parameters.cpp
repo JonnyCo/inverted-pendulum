@@ -8,6 +8,7 @@
 //----Current Parameters-----
 
 volatile float Fs = 6500.0;   //Sample frequency in Hz
+volatile float Ts = 1.0/Fs; 
 
 volatile float pKp = 15.0;      //position mode PID values.  Depending on your motor/load/desired performance, you will need to tune these values.  You can also implement your own control scheme
 volatile float pKi = 0.2;
@@ -19,9 +20,15 @@ volatile float vKi = 0.001;
 volatile float vKd = 0.0;
 volatile float vLPF = 100.0;       //break frequency in hertz
 
-volatile float iKbt = -8.2809; 
-volatile float iKbv = -0.8423;
-volatile float iKwv = -.0034;
+volatile float iKbt = -5.7469; 
+volatile float iKbv = -0.9839;
+volatile float iKwv = -.0072;
+
+volatile double ac1 = 0.0;
+volatile double ac2 = 0.0;
+volatile double ra1 = 1.25*.0254;
+volatile double ra2 = 7.25*.0254;
+volatile double grav = 9.81;
 
 //This is the encoder lookup table (created by calibration routine):
 

@@ -16,9 +16,10 @@ extern volatile float e;  // e = r-y (error)
 extern volatile float p;  // proportional effort
 extern volatile float i;  // integral effort
 
-extern volatile float bv;   //body velocity
-extern volatile float bt;   //body angle
-extern volatile float bt_1; 
+extern volatile double bv;   //body velocity
+extern volatile double bt;   //body angle
+extern volatile double bt_1; 
+extern volatile double bt_2;
 
 
 extern volatile float u;  //real control effort (not abs)

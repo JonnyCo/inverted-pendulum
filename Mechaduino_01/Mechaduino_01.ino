@@ -87,6 +87,23 @@ void loop()                 // main loop
 
   serialCheck();              //must have this execute in loop for serial commands to function
   
+//  ac1 = (((analogRead(0)-512.0)*6.0*grav)); 
+//  SerialUSB.println(ac1,8);
+//  ac1 = ((ac1*Ts*Ts)/(grav*Ts*Ts + ra1))+ (((2*ra1*bt_1) -(ra1*bt_2))/(grav*Ts*Ts + ra1));
+//  SerialUSB.println(ac1,8);
+
+//  ac2 = (((analogRead(2)-512.00)*6*grav));            
+//  ac2 = (((ac2*Ts*Ts) + (2*ra2*bt_1) -(ra2*bt_2))/(grav*Ts*Ts + ra2));
+//  
+//  bt = (1000*(ac1+ac2)/2.0)+.5; 
+  
+  SerialUSB.println(analogRead(0));
+  SerialUSB.println(analogRead(1));
+  SerialUSB.println(analogRead(2));
+  SerialUSB.println(analogRead(3));
+  SerialUSB.println("boom");
+  delay(100);
+  
 //  r_temp = -(analogRead(0)-512.0);
 //
 //  if (abs(r_temp)>5){
