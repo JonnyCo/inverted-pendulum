@@ -2,7 +2,6 @@
 //The main control loop is executed by the TC5 timer interrupt:
 
 #include <SPI.h>
-
 #include "State.h"
 #include "Utils.h"
 #include "Parameters.h"
@@ -64,9 +63,9 @@ void TC5_Handler() {                // gets called with FPID frequency
 
         case 'i':
                              
-          v = vLPFa*v +  vLPFb*(yw-yw_1);         //v is wheel velocity
+          v = vLPFa*v +  vLPFb*(yw-yw_1);         //v is wheel velocity [rps]
           
-          bv = pLPFa*bv + pLPFb*pKd*(bt-bt_1);    //bv is pendulum body velocity
+          bv = pLPFa*bv + pLPFb*pKd*(bt-bt_1);    //bv is pendulum body velocity [rps]
 
           u = (iKwv*v) + (iKbt*bt) + (iKbv*bv); 
           

@@ -1,4 +1,7 @@
 
+
+
+
 /*
   -------------------------------------------------------------
   Mechaduino 0.1 Firmware  v0.1.3
@@ -45,12 +48,16 @@
 #include "Parameters.h"
 #include "State.h"
 #include "analogFastWrite.h"
+#include <Adafruit_Sensor.h>
+#include <Adafruit_BNO055.h>
 
 //////////////////////////////////////
 /////////////////SETUP////////////////
 //////////////////////////////////////
 
-  static float r_temp = 0;
+Adafruit_BNO055 bno = Adafruit_BNO055(55);
+
+static float r_temp = 0;
 void setup()        // This code runs once at startup
 {                         
 
@@ -87,33 +94,13 @@ void loop()                 // main loop
 
   serialCheck();              //must have this execute in loop for serial commands to function
   
-//  ac1 = (((analogRead(0)-512.0)*6.0*grav)); 
-//  SerialUSB.println(ac1,8);
-//  ac1 = ((ac1*Ts*Ts)/(grav*Ts*Ts + ra1))+ (((2*ra1*bt_1) -(ra1*bt_2))/(grav*Ts*Ts + ra1));
-//  SerialUSB.println(ac1,8);
-
-//  ac2 = (((analogRead(2)-512.00)*6*grav));            
-//  ac2 = (((ac2*Ts*Ts) + (2*ra2*bt_1) -(ra2*bt_2))/(grav*Ts*Ts + ra2));
-//  
-//  bt = (1000*(ac1+ac2)/2.0)+.5; 
+  imu::Quaternion quat = bno.getQuat(); 
+//  SerialUSB.println(analogRead(0));
   
-  SerialUSB.println(analogRead(0));
-  SerialUSB.println(analogRead(1));
-  SerialUSB.println(analogRead(2));
-  SerialUSB.println(analogRead(3));
-  SerialUSB.println("boom");
+  quat.toEuler();
+  SerialUSB.println(quat);
   delay(100);
   
-//  r_temp = -(analogRead(0)-512.0);
-//
-//  if (abs(r_temp)>5){
-//  r = 0;
-//
-// }
-// 
-// else{
-//  r = 50 * r_temp;
-// }
   
 //  SerialUSB.println(r);
 //  delay(100);
