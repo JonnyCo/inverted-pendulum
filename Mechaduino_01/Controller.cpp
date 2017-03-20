@@ -8,21 +8,22 @@
 
 
 void TC5_Handler() {                // gets called with FPID frequency
-  
+
   static int print_counter = 0;               //this is used by step response
 
   if (TC5->COUNT16.INTFLAG.bit.OVF == 1) {    // A counter overflow caused the interrupt
-     
+
     TEST1_HIGH();  //digitalWrite(3, HIGH);       //Fast Write to Digital 3 for debugging
 
     y = lookup[readEncoder()];                    //read encoder and lookup corrected angle in calibration lookup table
 
 
-    imu::Quaternion quat = bno.getQuat(); 
+    imu::Quaternion quat = bno.getQuat();
     imu::Vector<3> euler = quat.toEuler();
-    imu::Vector<3> velo = quat.toAngularVelocity(0.01);
-   // bt = 
-   
+    imu::Vector<3> velo  = bno.getVector(Adafruit_BNO055::VECTOR_GYROSCOPE);
+    // bt =
+    SerialUSB.println(velo.x(), 4);
+
     if ((y - y_1) < -180.0) wrap_count += 1;      //Check if we've rotated more than a full revolution (have we "wrapped" around from 359 degrees to 0 or ffrom 0 to 359?)
     else if ((y - y_1) > 180.0) wrap_count -= 1;
 
@@ -34,69 +35,69 @@ void TC5_Handler() {                // gets called with FPID frequency
     }
     else {
       switch (mode) {
-        case 'x':         // position control                        
-            e = (r - yw);
-            
-            ITerm += (pKi * e);                             //Integral wind up limit
-            if (ITerm > 150.0) ITerm = 150.0;
-            else if (ITerm < -150.0) ITerm = -150.0;          
-           
-            DTerm = pLPFa*DTerm -  pLPFb*pKd*(yw-yw_1);
-           
-            u = (pKp * e) + ITerm + DTerm;
-           
-           
-            break;
-            
+        case 'x':         // position control
+          e = (r - yw);
+
+          ITerm += (pKi * e);                             //Integral wind up limit
+          if (ITerm > 150.0) ITerm = 150.0;
+          else if (ITerm < -150.0) ITerm = -150.0;
+
+          DTerm = pLPFa * DTerm -  pLPFb * pKd * (yw - yw_1);
+
+          u = (pKp * e) + ITerm + DTerm;
+
+
+          break;
+
         case 'v':         // velocity controlr
-          v = vLPFa*v +  vLPFb*(yw-yw_1);     //filtered velocity called "DTerm" because it is similar to derivative action in position loop
+          v = vLPFa * v +  vLPFb * (yw - yw_1); //filtered velocity called "DTerm" because it is similar to derivative action in position loop
 
           e = (r - v);   //error in degrees per rpm (sample frequency in Hz * (60 seconds/min) / (360 degrees/rev) )
 
           ITerm += (vKi * e);                 //Integral wind up limit
           if (ITerm > 200) ITerm = 200;
           else if (ITerm < -200) ITerm = -200;
-        
-          u = ((vKp * e) + ITerm - (vKd * (e-e_1)));
-          
+
+          u = ((vKp * e) + ITerm - (vKd * (e - e_1)));
+
           //SerialUSB.println(e);
           break;
-          
+
         case 't':         // torque control
           u = 1.0 * r;
           break;
 
         case 'i':
-                             
-          v = vLPFa*v +  vLPFb*(yw-yw_1);         //v is wheel velocity [rps]
-          
+
+          v = vLPFa * v +  vLPFb * (yw - yw_1);   //v is wheel velocity [rps]
+
           //bv = pLPFa*bv + pLPFb*pKd*(bt-bt_1);    //bv is pendulum body velocity [rps]
 
-          u = (iKwv*v) + (iKbt*bt) + (iKbv*bv); 
-          
-          
+          u = (iKwv * v) + (iKbt * bt) + (iKbv * bv);
+
+
           break;
 
-          
+
         default:
           u = 0;
           break;
       }
 
-    y_1 = y;  //copy current value of y to previous value (y_1) for next control cycle before PA angle added
+      y_1 = y;  //copy current value of y to previous value (y_1) for next control cycle before PA angle added
 
-    
-    if (u > 0)          //Depending on direction we want to apply torque, add or subtract a phase angle of PA for max effective torque.  PA should be equal to one full step angle: if the excitation angle is the same as the current position, we would not move!  
-      {                 //You can experiment with "Phase Advance" by increasing PA when operating at high speeds
-      y += PA;          //update phase excitation angle
-      if (u > uMAX)     // limit control effort
-        u = uMAX;       //saturation limits max current command
+
+      if (u > 0)          //Depending on direction we want to apply torque, add or subtract a phase angle of PA for max effective torque.  PA should be equal to one full step angle: if the excitation angle is the same as the current position, we would not move!
+      { //You can experiment with "Phase Advance" by increasing PA when operating at high speeds
+        y += PA;          //update phase excitation angle
+        if (u > uMAX)     // limit control effort
+          u = uMAX;       //saturation limits max current command
       }
-    else
+      else
       {
-      y -= PA;          //update phase excitation angle
-      if (u < -uMAX)    // limit control effort
-        u = -uMAX;      //saturation limits max current command
+        y -= PA;          //update phase excitation angle
+        if (u < -uMAX)    // limit control effort
+          u = -uMAX;      //saturation limits max current command
       }
 
       U = abs(u);       //
@@ -107,22 +108,22 @@ void TC5_Handler() {                // gets called with FPID frequency
 
       output(-y, round(U));    // update phase currents
     }
-    
-   // e_3 = e_2;    //copy current values to previous values for next control cycle
-    e_2 = e_1;    //these past values can be useful for more complex controllers/filters.  Uncomment as necessary    
+
+    // e_3 = e_2;    //copy current values to previous values for next control cycle
+    e_2 = e_1;    //these past values can be useful for more complex controllers/filters.  Uncomment as necessary
     e_1 = e;
-   // u_3 = u_2;
+    // u_3 = u_2;
     u_2 = u_1;
     u_1 = u;
     yw_1 = yw;
     //y_1 = y;
     bt_2 = bt_1;
     bt_1 = bt;
-    
-    if (print_yw ==  true){       //for step resonse... still under development
-      print_counter += 1;  
-      if (print_counter >= 5){    // print position every 5th loop (every time is too much data for plotter and may slow down control loop
-        SerialUSB.println(int(yw*1024));    //*1024 allows us to print ints instead of floats... may be faster
+
+    if (print_yw ==  true) {      //for step resonse... still under development
+      print_counter += 1;
+      if (print_counter >= 5) {   // print position every 5th loop (every time is too much data for plotter and may slow down control loop
+        SerialUSB.println(int(yw * 1024));  //*1024 allows us to print ints instead of floats... may be faster
         print_counter = 0;
       }
     }
