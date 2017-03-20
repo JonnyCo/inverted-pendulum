@@ -16,7 +16,11 @@ void TC5_Handler() {                // gets called with FPID frequency
     TEST1_HIGH();  //digitalWrite(3, HIGH);       //Fast Write to Digital 3 for debugging
 
     y = lookup[readEncoder()];                    //read encoder and lookup corrected angle in calibration lookup table
-    
+
+
+    imu::Quaternion quat = bno.getQuat(); 
+    imu::Vector<3> euler = quat.toEuler();
+    imu::Vector<3> velo = quat.toAngularVelocity(0.01);
    // bt = 
    
     if ((y - y_1) < -180.0) wrap_count += 1;      //Check if we've rotated more than a full revolution (have we "wrapped" around from 359 degrees to 0 or ffrom 0 to 359?)
@@ -129,6 +133,7 @@ void TC5_Handler() {                // gets called with FPID frequency
 
 
 }
+
 
 
 
