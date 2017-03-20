@@ -3,10 +3,16 @@
 #include <Wire.h>
 #include "Parameters.h"
 #include "math.h"
+#include <Adafruit_Sensor.h>
+#include <Adafruit_BNO055.h>
+#include <utility/imumaths.h>
 
 
 //----Current Parameters-----
-
+Adafruit_BNO055 bno = Adafruit_BNO055(55);
+imu::Vector<3> euler = bno.getVector(Adafruit_BNO055::VECTOR_EULER);
+imu::Vector<3> velo = bno.getVector(Adafruit_BNO055::VECTOR_GYROSCOPE);
+imu::Quaternion quat = bno.getQuat(); 
 volatile float Fs = 6500.0;   //Sample frequency in Hz
 volatile float Ts = 1.0/Fs; 
 

@@ -407,6 +407,10 @@ void serialCheck() {        //Monitors serial for commands.  Must be called in r
         stepResponse();
         break;
 
+      case 'b':
+        displayCalStatus();
+       break;
+
 
       default:
         break;
@@ -1057,7 +1061,37 @@ void stepResponse() {     // not done yet...
 
 }
 
+/**************************************************************************/
+/*
+    Display sensor calibration status
+*/
+/**************************************************************************/
+void displayCalStatus(void)
+{
+  /* Get the four calibration values (0..3) */
+  /* Any sensor data reporting 0 should be ignored, */
+  /* 3 means 'fully calibrated" */
+  uint8_t system, gyro, accel, mag;
+  system = gyro = accel = mag = 0;
+  bno.getCalibration(&system, &gyro, &accel, &mag);
 
+  /* The data should be ignored until the system calibration is > 0 */
+  SerialUSB.println("\t");
+  if (!system)
+  {
+    SerialUSB.println("! ");
+  }
+
+  /* Display the individual values */
+  SerialUSB.println("Sys:");
+  SerialUSB.println(system, DEC);
+  SerialUSB.println(" G:");
+  SerialUSB.println(gyro, DEC);
+  SerialUSB.println(" A:");
+  SerialUSB.println(accel, DEC);
+  SerialUSB.println(" M:");
+  SerialUSB.println(mag, DEC);
+}
 
 void moveRel(float pos_final,int vel_max, int accel){
   

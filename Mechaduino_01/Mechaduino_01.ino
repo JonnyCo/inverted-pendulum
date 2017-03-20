@@ -48,14 +48,12 @@
 #include "Parameters.h"
 #include "State.h"
 #include "analogFastWrite.h"
-#include <Adafruit_Sensor.h>
-#include <Adafruit_BNO055.h>
+
 
 //////////////////////////////////////
 /////////////////SETUP////////////////
 //////////////////////////////////////
 
-Adafruit_BNO055 bno = Adafruit_BNO055(55);
 
 static float r_temp = 0;
 void setup()        // This code runs once at startup
@@ -70,8 +68,16 @@ void setup()        // This code runs once at startup
   serialMenu();                     // Prints menu to serial monitor
   setupSPI();                       // Sets up SPI for communicating with encoder
   digitalWrite(ledPin,LOW);         // turn LED off 
+  if(!bno.begin())
+  {
+    /* There was a problem detecting the BNO055 ... check your connections */
+    SerialUSB.println("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
+    while(1);
+  }
+  delay(1000);
+    
+  bno.setExtCrystalUse(true);
   
-
   // Uncomment the below lines as needed for your application.
   // Leave commented for initial calibration and tuning.
   
@@ -94,12 +100,12 @@ void loop()                 // main loop
 
   serialCheck();              //must have this execute in loop for serial commands to function
   
-  imu::Quaternion quat = bno.getQuat(); 
+  //imu::Quaternion quat = bno.getQuat(); 
 //  SerialUSB.println(analogRead(0));
   
-  quat.toEuler();
-  SerialUSB.println(quat);
-  delay(100);
+  //quat.toEuler();
+  //SerialUSB.println(quat.w(),4);
+ // delay(100);
   
   
 //  SerialUSB.println(r);

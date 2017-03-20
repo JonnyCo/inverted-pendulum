@@ -1,4 +1,7 @@
 //Contains the Mechaduino parameter declarations
+#include <Adafruit_Sensor.h>
+#include <Adafruit_BNO055.h>
+#include <utility/imumaths.h>
 
 #ifndef __PARAMETERS_H__
 #define __PARAMETERS_H__
@@ -8,6 +11,11 @@
 
 //----Current Parameters-----
 
+
+extern Adafruit_BNO055 bno;
+extern imu::Vector<3> euler;
+extern imu::Vector<3> velo;
+extern imu::Quaternion quat;
 extern volatile float Ts;
 extern volatile float Fs;
 

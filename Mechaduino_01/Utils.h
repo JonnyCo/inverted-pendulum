@@ -62,6 +62,8 @@
 
   void stepResponse();              //generates position mode step response in Serial Plotter
 
+  void displayCalStatus();          //BNO055 Sensor cal
+
   void moveRel(float pos_final,int vel_max, int accel);     // Generates trapezoidal motion profile for closed loop position mode
   
   void moveAbs(float pos_final,int vel_max, int accel);     // Generates trapezoidal motion profile for closed loop position mode
