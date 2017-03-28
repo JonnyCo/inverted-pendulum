@@ -58,7 +58,6 @@
 static float r_temp = 0;
 void setup()        // This code runs once at startup
 {                         
-
   digitalWrite(ledPin,HIGH);        // turn LED on 
   setupPins();                      // configure pins
   setupTCInterrupts();              // configure controller interrupt
@@ -77,6 +76,7 @@ void setup()        // This code runs once at startup
   delay(1000);
     
   bno.setExtCrystalUse(true);
+
   
   // Uncomment the below lines as needed for your application.
   // Leave commented for initial calibration and tuning.

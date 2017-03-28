@@ -21,8 +21,9 @@ void TC5_Handler() {                // gets called with FPID frequency
     imu::Quaternion quat = bno.getQuat();
     imu::Vector<3> euler = quat.toEuler();
     imu::Vector<3> velo  = bno.getVector(Adafruit_BNO055::VECTOR_GYROSCOPE);
-    // bt =
-    SerialUSB.println(velo.x(), 4);
+//    bt = euler.z;
+//    bv = velo.z;
+    SerialUSB.println(euler.z(), 4);
 
     if ((y - y_1) < -180.0) wrap_count += 1;      //Check if we've rotated more than a full revolution (have we "wrapped" around from 359 degrees to 0 or ffrom 0 to 359?)
     else if ((y - y_1) > 180.0) wrap_count -= 1;
