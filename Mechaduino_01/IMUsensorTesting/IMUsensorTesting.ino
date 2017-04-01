@@ -1,7 +1,10 @@
+
 #include <Wire.h>
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BNO055.h>
 #include <utility/imumaths.h>
+
+//  setAxisP0         ( void );
 
 /* This driver uses the Adafruit unified sensor library (Adafruit_Sensor),
    which provides a common 'type' for sensor data and some helper functions.
@@ -66,6 +69,7 @@ void displaySensorStatus(void)
   uint8_t system_status, self_test_results, system_error;
   system_status = self_test_results = system_error = 0;
   bno.getSystemStatus(&system_status, &self_test_results, &system_error);
+  
 
   /* Display the results in the Serial Monitor */
   Serial.println("");
@@ -111,11 +115,24 @@ void displayCalStatus(void)
   Serial.print(mag, DEC);
 }
 
+void Adafruit_BNO055::setAxisP0(void)
+{
+  setMode(OPERATION_MODE_CONFIG);
+  write8(BNO055_AXIS_MAP_CONFIG_ADDR, 0x21);
+  delay(10);
+  write8(BNO055_AXIS_MAP_SIGN_ADDR, 0x04);
+  delay(30);
+  setMode(OPERATION_MODE_NDOF);
+  return;
+}
+
 /**************************************************************************/
 /*
     Arduino setup function (automatically called at startup)
 */
 /**************************************************************************/
+
+
 void setup(void)
 {
   Serial.begin(9600);
@@ -125,11 +142,13 @@ void setup(void)
   if(!bno.begin())
   {
     /* There was a problem detecting the BNO055 ... check your connections */
+    bno.setAxisP0();
     Serial.print("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
     while(1);
   }
 
   delay(1000);
+  
 
   /* Display some basic information on this sensor */
   displaySensorDetails();
@@ -138,7 +157,13 @@ void setup(void)
   displaySensorStatus();
 
   bno.setExtCrystalUse(true);
+  bno.setAxisP0();
+
+  
 }
+
+
+
 
 /**************************************************************************/
 /*
@@ -152,6 +177,7 @@ void loop(void)
   sensors_event_t event;
   bno.getEvent(&event);
   imu::Vector<3> velo  = bno.getVector(Adafruit_BNO055::VECTOR_GYROSCOPE);
+  
 
   /* Display the floating point data */
   Serial.print("X: ");
