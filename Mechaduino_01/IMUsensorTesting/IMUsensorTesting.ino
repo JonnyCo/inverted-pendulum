@@ -4,8 +4,6 @@
 #include <Adafruit_BNO055.h>
 #include <utility/imumaths.h>
 
-//  setAxisP0         ( void );
-
 /* This driver uses the Adafruit unified sensor library (Adafruit_Sensor),
    which provides a common 'type' for sensor data and some helper functions.
 
