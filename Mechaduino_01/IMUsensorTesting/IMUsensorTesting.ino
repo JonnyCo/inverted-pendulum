@@ -23,11 +23,8 @@
    Connect VDD to 3-5V DC
    Connect GROUND to common ground
 
-   History
-   =======
-   2015/MAR/03  - First release (KTOWN)
-   2015/AUG/27  - Added calibration and system status helpers
 */
+
 
 /* Set the delay between fresh samples */
 #define BNO055_SAMPLERATE_DELAY_MS (100)
@@ -113,22 +110,39 @@ void displayCalStatus(void)
   Serial.print(mag, DEC);
 }
 
-void Adafruit_BNO055::setAxisP0(void)
+
+/* 
+The Following chard details the axis remap registers
+
+Orientation | AXIS_MAP_CONFIG | AXIS_MAP_SIGN |
+------------|-----------------|---------------|
+P0          | 0x21            | 0x04
+P1          | 0x24            | 0x00
+P2          | 0x24            | 0x06
+P3          | 0x21            | 0x02
+P4          | 0x24            | 0x03
+P5          | 0x21            | 0x01
+P6          | 0x21            | 0x07
+P7          | 0x24            | 0x05
+
+
+Look at this the orientations:
+  
+ https://cdn-shop.adafruit.com/datasheets/BST_BNO055_DS000_12.pdf
+
+*/
+void Adafruit_BNO055::setAxis(void)
 {
-  setMode(OPERATION_MODE_CONFIG);
-  write8(BNO055_AXIS_MAP_CONFIG_ADDR, 0x21);
+  // Enter config mode
+  setMode(OPERATION_MODE_CONFIG); 
+  write8(BNO055_AXIS_MAP_CONFIG_ADDR, 0x21); // the last hex digit can be edited
   delay(10);
   write8(BNO055_AXIS_MAP_SIGN_ADDR, 0x04);
   delay(30);
+  // Exit config mode to read data
   setMode(OPERATION_MODE_NDOF);
   return;
 }
-
-/**************************************************************************/
-/*
-    Arduino setup function (automatically called at startup)
-*/
-/**************************************************************************/
 
 
 void setup(void)
@@ -140,7 +154,6 @@ void setup(void)
   if(!bno.begin())
   {
     /* There was a problem detecting the BNO055 ... check your connections */
-    bno.setAxisP0();
     Serial.print("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
     while(1);
   }
@@ -155,20 +168,14 @@ void setup(void)
   displaySensorStatus();
 
   bno.setExtCrystalUse(true);
-  bno.setAxisP0();
+  
+  // Call set axis function
+  bno.setAxis();
 
   
 }
 
 
-
-
-/**************************************************************************/
-/*
-    Arduino loop function, called once 'setup' is complete (your own code
-    should go here)
-*/
-/**************************************************************************/
 void loop(void)
 {
   /* Get a new sensor event */
